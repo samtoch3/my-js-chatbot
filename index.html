@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>My ChatBot</title>
+    <link rel="icon" type="image/png" href="chatbot.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Dosis&display=swap");
+        @import url('https://fonts.googleapis.com/css2?family=Comfortaa&display=swap');
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0px;
+            transition: all 0.3s;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background: #282828;
+            color: #eee;
+            font-family: "Poppins", sans-serif;
+            background-attachment: fixed;
+            position: relative;
+        }
+        
+        header {
+            background-color: #010101;
+            position: fixed;
+            top: 0;
+            width: 100vw;
+            height: 3.7em;
+            display: flex;
+            align-items: center;
+            padding-left: 1rem;
+            box-shadow: #000 2px 0 4px;
+            justify-content: space-around;
+            transition: all 1s;
+            font-family: "Comfortaa", cursive;
+        }
+        
+        header h2 {
+            font-size: 1.35em;
+            background: linear-gradient( 141.27deg, #ff904e -4.24%, #ff5982 21.25%, #ec68f4 44.33%, #79e2ff 83.46%);
+            background-size: 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: gradient-heading 10s ease infinite;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .typing {
+            font-size: 0.85em;
+            color: chartreuse;
+            display: none;
+        }
+        
+        .suggest-chat {
+            width: 2em;
+            animation: chat-btn 5 15s;
+        }
+        
+        main {
+            height: 86vh;
+            margin-top: 8vh;
+        }
+        
+        .chat-msg-box {
+            background-color: #616161;
+            padding: 0.5em 1em;
+            clear: both;
+            float: left;
+            border-radius: 0.4em;
+            max-width: 75vw;
+            margin: 15px 0px 0px 20px;
+            box-shadow: #000 2px 2px 6px;
+        }
+        
+        .chat-msg-box:last-child {
+            margin-bottom: 15vh;
+        }
+        
+        .chat-msg-box.clint {
+            background-color: blueviolet;
+            float: right;
+            margin: 15px 20px 0px 0px;
+        }
+        
+        .main-background {
+            position: fixed;
+            top: 42vh;
+            text-align: center;
+            width: 100vw;
+            z-index: -1;
+        }
+        
+        .main-background div {
+            width: auto;
+            border: 2px solid #3f3f3f;
+            margin: auto;
+            display: inline-block;
+            padding: 1em 2em;
+            border-radius: 0.5em;
+            max-width: 85vw;
+            box-shadow: inset #000 0 0 4px 1px;
+            color: #757575;
+        }
+        
+        .main-background div h3 {
+            margin-bottom: 0.5em;
+        }
+        
+        .main-background div p {
+            font-size: 14px;
+        }
+        
+        .all-questions h2 {
+            padding: 10vh 0 2vh 0;
+            font-family: "Dosis", sans-serif;
+            text-align: center;
+            color: orange;
+        }
+        
+        .all-questions {
+            display: none;
+        }
+        
+        .questions.container {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-content: center;
+            justify-content: space-around;
+        }
+        
+        .questions.container h2 {
+            padding-top: 3.7em;
+        }
+        
+        .question {
+            background-color: #616161;
+            margin: 0.4em 0.8em;
+            padding: 0.7em;
+            border-radius: 0.4em;
+            box-shadow: #000 2px 2px 6px;
+            font-size: 14px;
+            background: linear-gradient(223deg, #616161, #454545);
+        }
+        
+        .question:hover {
+            background: blueviolet;
+        }
+        
+        .question p::selection {
+            background-color: chocolate;
+            color: black;
+            user-select: all;
+            -webkit-user-select: all;
+        }
+        
+        footer {
+            background-color: #282828;
+            position: fixed;
+            bottom: 0;
+            width: 100vw;
+            height: 3em;
+            display: flex;
+            align-items: center;
+            box-shadow: #000 -2px 0 4px 1px;
+            padding: 0px 3vw;
+        }
+        
+        .chat-input {
+            width: 82vw;
+            height: 2.5em;
+            border-radius: 0.5em;
+            background: #4c4c4c;
+            border: 2px solid #6e6d6d;
+            padding-left: 0.5em;
+            color: #dbdbdb;
+        }
+        
+        .chat-input::placeholder {
+            color: #9f9f9f;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: chartreuse;
+        }
+        
+        .chat-input:invalid {
+            border-color: orangered;
+        }
+        
+        #chat-form {
+            display: flex;
+            align-items: center;
+        }
+        
+        .chat-submit {
+            width: 10vw;
+            background: transparent;
+            border: 0;
+        }
+        
+        .chat-submit svg {
+            fill: orange;
+        }
+        
+        .chat-submit svg:hover {
+            fill: chartreuse;
+        }
+        
+        .spinner {
+            margin: 2px auto 0;
+            width: 70px;
+            text-align: center;
+        }
+        
+        .spinner>div {
+            width: 14px;
+            height: 14px;
+            background-color: #eee;
+            border-radius: 100%;
+            display: inline-block;
+            -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+            animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+        }
+        
+        .spinner .bounce1 {
+            -webkit-animation-delay: -0.32s;
+            animation-delay: -0.32s;
+        }
+        
+        .spinner .bounce2 {
+            -webkit-animation-delay: -0.16s;
+            animation-delay: -0.16s;
+        }
+        
+        @media screen and (min-width: 680px) {
+            .questions.container {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .question {
+                width: 31vw;
+            }
+            .question:hover {
+                transform: scale(1.1);
+            }
+        }
+        
+        @media screen and (max-width: 680px) {
+            div p {
+                font-size: 14px;
+            }
+            .chat-input {
+                font-size: 14px;
+            }
+        }
+        
+        @keyframes gradient-heading {
+            0% {
+                background-position: 0 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            to {
+                background-position: 0 50%;
+            }
+        }
+        
+        @keyframes sk-bouncedelay {
+            0%,
+            80%,
+            100% {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+            40% {
+                -webkit-transform: scale(1);
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes chat-btn {
+            0%,
+            30%,
+            85% {
+                transform: rotateY(0deg);
+            }
+            33%,
+            80% {
+                transform: rotateY(180deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div>
+            <h2>ChatBot</h2>
+            <p class="typing">bot is typing. . .</p>
+        </div>
+        <div id="toogle-chat">
+            <img src="https://javascript-chatbot.vercel.app/src/images/chat_icon.png" class="suggest-chat">
+        </div>
+    </header>
+    <main>
+    </main>
+    <div class="main-background">
+        <div>
+            <h3>ChatBot</h3>
+            <p>A Simple & Powerful chatbot in JavaScript.</p>
+        </div>
+    </div>
+    <section class="all-questions">
+        <h2>Suggested Chats</h2>
+        <div class="questions container"></div>
+    </section>
+    <footer>
+        <form id="chat-form">
+            <input type="text" class="chat-input" required>
+            <button type="submit" class="chat-submit"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+          viewBox="0 0 24 24">
+          <path
+            d="M24 0l-6 22-8.129-7.239 7.802-8.234-10.458 7.227-7.215-1.754 24-12zm-15 16.668v7.332l3.258-4.431-3.258-2.901z" />
+        </svg>
+      </button>
+        </form>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script>
+        window.onload = async() => {
+            const submitForm = () => {
+                const chatInput = $(".chat-input").val();
+
+                $("main").append(`
+      <div class="chat-msg-box clint">
+        <p>${chatInput}</p>
+      </div>
+      `);
+
+                $.ajax({
+                    url: `https://javascript-chatbot.vercel.app/api/question/?q=${encodeURIComponent(chatInput)}`,
+                    method: "GET",
+                    cache: false,
+                    beforeSend: () => {
+                        $(".chat-input").val("");
+                        $(".typing").show();
+                        $("main").append(`
+            <div class="chat-msg-box bot">
+              <div class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+              </div>
+            </div>
+            `);
+                        if ($(".chat-msg-box").length >= 10) {
+                            $([document.documentElement, document.body]).animate({
+                                scrollTop: $(".chat-msg-box.bot:last-child").offset().top,
+                            }, {
+                                duration: 500
+                            }, );
+                        }
+                    },
+                    success: (data) => {
+                        const response = data.responseText.replace(/\n/gm, "</br>");
+                        $(".chat-msg-box.bot:last-child").html(`<p>${response}</p>`);
+                    },
+                    error: () => {
+                        $(".chat-msg-box.bot:last-child").remove();
+                    },
+                    complete: () => {
+                        $(".typing").hide();
+                    },
+                });
+            };
+
+            setTimeout(() => {
+                $.ajax({
+                    url: "https://javascript-chatbot.vercel.app/api/welcome",
+                    success: (data) => {
+                        $("main").append(
+                            `<div class="chat-msg-box bot"><p>${data.responseText}</p></div>`,
+                        );
+                    },
+                });
+            }, 3000);
+
+            $.ajax({
+                url: "https://javascript-chatbot.vercel.app/api/allquestions",
+                success: (data) => {
+                    data.forEach((qus) => {
+                        $(".questions.container").append(`
+            <div class="question">
+              <p>${qus}</p>
+            </div>
+            `);
+                    });
+                },
+            });
+
+            const toogleShowSuggestions = () => {
+                if ($("main").css("display") === "none") {
+                    $(".all-questions").hide();
+                    $("header img").attr(
+                        "src",
+                        "https://javascript-chatbot.vercel.app/src/images/chat_icon.png",
+                    );
+                    $("main").show();
+                    $("footer").show();
+                } else {
+                    $(".all-questions").show();
+                    $("header img").attr(
+                        "src",
+                        "https://javascript-chatbot.vercel.app/src/images/close.png",
+                    );
+                    $("main").hide();
+                    $("footer").hide();
+                }
+            };
+
+            $("#toogle-chat").on("click", () => {
+                toogleShowSuggestions();
+            });
+
+            window.onresize = () => {
+                if (window.innerHeight < 580) {
+                    $("header").css("top", "-4em");
+                } else {
+                    $("header").css("top", "0vh");
+                }
+            };
+
+            $("#chat-form").submit((e) => {
+                e.preventDefault();
+                submitForm();
+            });
+
+            const typed = new Typed(".chat-input", {
+                strings: [
+                    "how many mm in 1 cm",
+                    "change 10 l into ml",
+                    "what is computer",
+                    "what is linux",
+                    "tell me about ChatBot",
+                    "who is Mahatma Gandhi",
+                    "who is Nelson Mandela",
+                    "When do you have birthday?",
+
+                    "I want a funny joke.",
+                    "Can you tell me a joke please?",
+                    "Can you tell me something about your creators?",
+                    "Are you just a bot?",
+                    "Date of your birthday.",
+                    "How are you today?",
+                    "could you be my friend",
+                    "where are you from",
+                    "search for pythagoras theorem",
+                    "what is Javascript", "what is HTML",
+                    "who is Narendra Modi",
+                    "tell me a joke"
+                ],
+                typeSpeed: 60,
+                backSpeed: 30,
+                backDelay: 1500,
+                showCursor: true,
+                cursorChar: "|",
+                attr: "placeholder",
+                loop: true,
+                bindInputFocusEvents: false,
+                shuffle: true,
+            });
+        };
+    </script>
+</body>
+
+</html>
