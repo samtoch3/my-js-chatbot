@@ -265,6 +265,28 @@
                 font-size: 14px;
             }
         }
+
+        @media screen and (min-width: 480px) {
+            .questions.container {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .question {
+                width: 31vw;
+            }
+            .question:hover {
+                transform: scale(1.1);
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            div p {
+                font-size: 14px;
+            }
+            .chat-input {
+                font-size: 14px;
+            }
+        }
         
         @keyframes gradient-heading {
             0% {
